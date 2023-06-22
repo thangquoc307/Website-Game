@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>game thu thanh</title>
+    <style>
+        div{
+            animation: start 0.5s;
+        }
+        input{
+            animation: start 0.5s;
+        }
+        @keyframes start {
+            from{
+                width: 0%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div onclick="heroShoot(event)" onmousemove="heroMove(event)" style="border: black 5px solid; width: 2100px; height: 700px; background-color: darkgrey; border-radius: 50px">
+    <span id="showHero"></span>
+    <span id="showAttack"></span>
+    <span id="showEnermy"></span>
+    <span id="showDeath"></span>
+    <span id="showTree"></span>
+</div>
+<br><br>
+<input type="text" id="score" style="height: 50px; width: 200px; font-size: 25px; background-color: darkgrey; color: black; border-radius: 20px; text-align: center; border: black 5px solid">
+<script>
+class hero{
+    constructor() {
+        this.x = 100;
+        this.y = 500;
+        this.width = 100;
+        this.height = 100;
+        this.score = 0;
+    }
+    build(){
+        document.getElementById("showHero").innerHTML = `<img src="img/hero%20dog.png" width="${this.width}px" height="${this.height}px" style="left: ${this.x}px; top: ${this.y - this.height/2}px; position: absolute">`;
+    }
+    move(y){
+        this.y = y;
+        this.build();
+    }
+    setScore(){
+        this.score++;
+        document.getElementById("score").value = "Score : " + this.score;
+    }
+}
+class attack{
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.width = 20;
+        this.height = 20;
+    }
+    build(){
+        document.getElementById("showAttack").innerHTML = `<img src="img/phi_tieu.png" width="${this.width}px" height="${this.height}px" style="left: ${this.x}px; top: ${this.y - this.height/2}px; position: absolute">`;
+    }
+    move(id){
+        if (this.x > 2100 - this.width/2 - 20){
+            clearInterval(id);
+        }
+        this.x += 10;
+        this.build();
+        if(checkIntersect(this, myEnemy)){
+            myHero.setScore();
+            myEnemy.reset();
+
+        }
+    }
+}
+class enemy{
+    constructor() {
+    this.x = 2000;
+    this.y = Math.random() * 580 + 70;
+    this.width = 100;
+    this.height = 100;
+    this.speed = 2;
+}
+    build(){
+        document.getElementById("showEnermy").innerHTML = `<img src="img/enemy.png" width="${this.width}px" height="${this.height}px" style="left: ${this.x}px; top: ${this.y - this.height/2}px; position: absolute">`;
+    }
+    move(id){
+        if (this.x > 0) {
+            this.x -= this.speed;
+            this.build();
+        }else{
+            clearInterval(id);
+            alert("Thua gòi !!! : mới được " + myHero.score + " điểm");
+        }
+    }
+    reset(){
+        createDeath();
+        this.x = 2000;
+        this.y = Math.random() * 580 + 70;
+        this.speed += 0.2;
+    }
+
+}
+class tree{
+    constructor(x, y, scale) {
+        this.x = x;
+        this.y = y;
+        this.scale = scale;
+        this.width = 50 * scale;
+        this.height = 50 * scale;
+    }
+    showTree(){
+        document.getElementById("showTree").innerHTML += `<img src="img/tree.png" width="${this.width}px" height="${this.height}px" style="left: ${this.x}px; top: ${this.y}px; position: absolute">`
+    }
+}
+myHero = new hero();
+
+let tree1 = new tree(400, 200, 2.5);
+let tree2 = new tree(800, 000, 2.7);
+let tree3 = new tree(900, 500, 3);
+let tree4 = new tree(1200, 400, 2.5);
+let tree5 = new tree(1600, 200, 3);
+let tree6 = new tree(480, 350, 2);
+tree1.showTree();
+tree2.showTree();
+tree3.showTree();
+tree4.showTree();
+tree5.showTree();
+tree6.showTree();
+
+myHero.build();
+document.getElementById("score").value = "Score : " + myHero.score;
+let myEnemy = new enemy();
+enemyMove();
+
+function heroMove(e){
+    let position = e.clientY;
+    if (position > myHero.height/2 + 10 && position < 700 - myHero.height/2 + 10){
+        myHero.move(position);
+    }
+}
+
+function enemyMove(){
+    myEnemy.build();
+    id = setInterval(function (){
+        myEnemy.move(id);
+    }, 0.1)
+
+}
+function heroShoot(e){
+    let position = e.clientY;
+    let x = myHero.x;
+    let shoot = new attack(x + 50, position);
+    let id = setInterval(function (){
+            shoot.move(id);
+        }, 0.001);
+}
+function createDeath(){
+    let width = myEnemy.width;
+    let height = myEnemy.height;
+    let x = myEnemy.x;
+    let y = myEnemy.y;
+    let index = myHero.score;
+    document.getElementById("showDeath").innerHTML += `<span id="death${index}"><img src="img/death.png" width="${width}px" height="${height}px" style="left: ${x}px; top: ${y - height/2}px; position: absolute"></span>`;
+    setTimeout(function () {document.getElementById(`death` + index).innerHTML = ""}, 2000);
+}
+function checkIntersect(ele1, ele2){
+    let x11 = ele1.x;
+    let x12 = ele1.x + ele1.width;
+    let x21 = ele2.x;
+    let x22 = ele2.x + ele2.width;
+    let y11 = ele1.y;
+    let y12 = ele1.y + ele1.height;
+    let y21 = ele2.y;
+    let y22 = ele2.y + ele2.height;
+    let maxX = Math.max(x12, x22);
+    let minX = Math.min(x11, x21);
+    let maxY = Math.max(y12, y22);
+    let minY = Math.min(y11, y21);
+    return ((ele1.width + ele2.width) > (maxX - minX)) && ((ele1.height + ele2.height) > (maxY - minY));
+}
+</script>
+</body>
+</html>
