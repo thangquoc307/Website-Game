@@ -15,10 +15,19 @@
                 width: 0%;
             }
         }
+        h2{
+            animation: text 2s;
+        }
+        @keyframes text {
+            from{
+                color: white;
+            }
+        }
     </style>
 </head>
 <body>
-<div onclick="heroShoot(event)" onmousemove="heroMove(event)" style="border: black 5px solid; width: 2100px; height: 700px; background-color: darkgrey; border-radius: 50px">
+<div onclick="heroShoot(event)" onmousemove="heroMove(event)" style="border: black 3px solid; width: 1900px; height: 700px; background-color: darkgrey; border-radius: 50px">
+
     <span id="showHero"></span>
     <span id="showAttack"></span>
     <span id="showEnermy"></span>
@@ -26,14 +35,18 @@
     <span id="showTree"></span>
 </div>
 <br><br>
-<input type="text" id="score" style="height: 50px; width: 200px; font-size: 25px; background-color: darkgrey; color: black; border-radius: 20px; text-align: center; border: black 5px solid">
+<input type="text" id="score" style="height: 40px; width: 200px; font-size: 20px; background-color: darkgrey; border-radius: 20px; text-align: center; border: black 3px solid">
+<div>
+    <h2 style="margin-bottom: -10px"> - Click your Mouse to Attack</h2>
+    <h2> - F5 to Restart</h2>
+</div>
 <script>
 class hero{
     constructor() {
         this.x = 100;
         this.y = 500;
-        this.width = 100;
-        this.height = 100;
+        this.width = 80;
+        this.height = 80;
         this.score = 0;
     }
     build(){
@@ -59,7 +72,7 @@ class attack{
         document.getElementById("showAttack").innerHTML = `<img src="img/phi_tieu.png" width="${this.width}px" height="${this.height}px" style="left: ${this.x}px; top: ${this.y - this.height/2}px; position: absolute">`;
     }
     move(id){
-        if (this.x > 2100 - this.width/2 - 20){
+        if (this.x > 1900 - this.width/2 - 20){
             clearInterval(id);
         }
         this.x += 10;
@@ -73,10 +86,10 @@ class attack{
 }
 class enemy{
     constructor() {
-    this.x = 2000;
+    this.x = 1800;
     this.y = Math.random() * 580 + 70;
-    this.width = 100;
-    this.height = 100;
+    this.width = 80;
+    this.height = 80;
     this.speed = 2;
 }
     build(){
@@ -88,12 +101,12 @@ class enemy{
             this.build();
         }else{
             clearInterval(id);
-            alert("Thua gòi !!! : mới được " + myHero.score + " điểm");
+            alert("Die trong " + myHero.score + " điểm");
         }
     }
     reset(){
         createDeath();
-        this.x = 2000;
+        this.x = 1800;
         this.y = Math.random() * 580 + 70;
         this.speed += 0.2;
     }
@@ -104,8 +117,8 @@ class tree{
         this.x = x;
         this.y = y;
         this.scale = scale;
-        this.width = 50 * scale;
-        this.height = 50 * scale;
+        this.width = 40 * scale;
+        this.height = 40 * scale;
     }
     showTree(){
         document.getElementById("showTree").innerHTML += `<img src="img/tree.png" width="${this.width}px" height="${this.height}px" style="left: ${this.x}px; top: ${this.y}px; position: absolute">`
